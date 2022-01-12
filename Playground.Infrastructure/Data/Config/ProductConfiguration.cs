@@ -8,7 +8,7 @@ namespace Playground.Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
-            builder.Property(p => p.Name).IsRequired().HasMaxLength(50);
+            builder.Property(p => p.Name).IsRequired().HasMaxLength(100);
         }
     }
 }

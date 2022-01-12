@@ -8,6 +8,7 @@ namespace Playground.Infrastructure.Data
         public static async Task CreateAndSeedDatabaseAsync(PlayDbContext context)
         {
             //just remove database in dev envirorment
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
             #region Products

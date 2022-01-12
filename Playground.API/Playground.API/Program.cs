@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
+using Playground.Core.Interfaces;
 using Playground.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddDbContext<PlayDbContext>(b =>
 {
     b.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -33,7 +35,7 @@ using (var scope = app.Services.CreateScope())
         await PlayDbContextSeed.CreateAndSeedDatabaseAsync(dbContext);
     }
 
-    if (env.IsDevelopment())
+    if (env.IsProduction())
     {
         await dbContext.Database.MigrateAsync();
     }
