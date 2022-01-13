@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Playground.Core.Entities;
 using Playground.Core.Interfaces;
-using Playground.Core.Specification;
 
 namespace Playground.Infrastructure.Data
 {
@@ -14,64 +13,77 @@ namespace Playground.Infrastructure.Data
             _dbContext = dbContext;
         }
 
-        public virtual async Task<T> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<T?> GetByIdAsync(int id)
         {
-            var keyValues = new object[] { id };
-            return await _dbContext.Set<T>().FindAsync(keyValues, cancellationToken);
+            return await _dbContext.Set<T>().FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> ListAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<T>> ListAsync(Func<IQueryable<T>, IQueryable<T>>? func = null)
         {
-            return await _dbContext.Set<T>().ToListAsync(cancellationToken);
+            var query = _dbContext.Set<T>().AsQueryable();
+            var resultQuery = func == null ? query : func(query);
+
+            return await resultQuery.ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> ListAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
-        {
-            var specificationResult = ApplySpecification(spec);
-            return await specificationResult.ToListAsync(cancellationToken);
-        }
-
-        public async Task<int> CountAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
-        {
-            var specificationResult = ApplySpecification(spec);
-            return await specificationResult.CountAsync(cancellationToken);
-        }
-
-        public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task<T> AddAsync(T entity)
         {
             await _dbContext.Set<T>().AddAsync(entity);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync();
 
             return entity;
         }
 
-        public async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(T entity)
         {
             _dbContext.Set<T>().Remove(entity);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<T> FirstAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
+        public async Task<int> CountAsync(Func<IQueryable<T>, IQueryable<T>>? func = null)
         {
-            var specificationResult = ApplySpecification(spec);
-            return await specificationResult.FirstAsync(cancellationToken);
+            var query = _dbContext.Set<T>().AsQueryable();
+            var resultQuery = func == null ? query : func(query);
+
+            return await resultQuery.CountAsync();
         }
 
-        public async Task<T> FirstOrDefaultAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
+        public async Task<T> FirstAsync(Func<IQueryable<T>, IQueryable<T>>? func = null)
         {
-            var specificationResult = ApplySpecification(spec);
-            return await specificationResult.FirstOrDefaultAsync(cancellationToken);
+            var query = _dbContext.Set<T>().AsQueryable();
+            var resultQuery = func == null ? query : func(query);
+
+            return await resultQuery.FirstAsync();
         }
 
-        private IQueryable<T> ApplySpecification(ISpecification<T> spec)
+        public async Task<T?> FirstOrDefaultAsync(Func<IQueryable<T>, IQueryable<T>>? func = null)
         {
-            return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>().AsQueryable(), spec);
+            var query = _dbContext.Set<T>().AsQueryable();
+            var resultQuery = func == null ? query : func(query);
+
+            return await resultQuery.FirstOrDefaultAsync();
+        }
+
+        public async Task<T> SingleAsync(Func<IQueryable<T>, IQueryable<T>>? func = null)
+        {
+            var query = _dbContext.Set<T>().AsQueryable();
+            var resultQuery = func == null ? query : func(query);
+
+            return await resultQuery.SingleAsync();
+        }
+
+        public async Task<T?> SingleOrDefaultAsync(Func<IQueryable<T>, IQueryable<T>>? func = null)
+        {
+            var query = _dbContext.Set<T>().AsQueryable();
+            var resultQuery = func == null ? query : func(query);
+
+            return await resultQuery.SingleOrDefaultAsync();
         }
     }
 }

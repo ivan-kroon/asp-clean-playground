@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
+using Microsoft.OpenApi.Models;
 using Playground.Core.Interfaces;
 using Playground.Infrastructure.Data;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,17 @@ builder.Services.AddDbContext<PlayDbContext>(b =>
         DbContextLoggerOptions.SingleLine | DbContextLoggerOptions.UtcTime);
 });
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Playground API",
+        Version = "v1"
+    });
+});
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,6 +46,12 @@ using (var scope = app.Services.CreateScope())
     if (env.IsDevelopment())
     {
         await PlayDbContextSeed.CreateAndSeedDatabaseAsync(dbContext);
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Awesome API V1");
+        });
     }
 
     if (env.IsProduction())

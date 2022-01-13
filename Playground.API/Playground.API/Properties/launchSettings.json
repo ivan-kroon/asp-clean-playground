@@ -12,7 +12,7 @@
     "Playground.API": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/product",
+      "launchUrl": "api/invoice/1",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

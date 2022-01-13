@@ -55,12 +55,14 @@ namespace Playground.Infrastructure.Data
             #region Invoices
             var invoice1 = new Invoice
             {
+                InvoiceNumber = "01/2022",
                 Customer = customer1,
                 DateCreated = DateTime.Today,
             };
 
             var invoice2 = new Invoice
             {
+                InvoiceNumber = "02/2022",
                 Customer = customer2,
                 DateCreated = DateTime.Today,
             };
@@ -71,28 +73,36 @@ namespace Playground.Infrastructure.Data
             {
                 Invoice = invoice1,
                 Product = product1,
-                Quantity = 10
+                Quantity = 10,
+                DiscountPercent = 20,
+                PricePerUnit = 80
             };
 
             var invoiceItem2 = new InvoiceItem
             {
                 Invoice = invoice1,
                 Product = product2,
-                Quantity = 2
+                Quantity = 2,
+                DiscountPercent = 20,
+                PricePerUnit = 400
             };
 
             var invoiceItem3 = new InvoiceItem
             {
                 Invoice = invoice2,
                 Product = product1,
-                Quantity = 20
+                Quantity = 20,
+                DiscountPercent= 10,
+                PricePerUnit = 90
             };
 
             var invoiceItem4 = new InvoiceItem
             {
                 Invoice = invoice2,
                 Product = product3,
-                Quantity = 3
+                Quantity = 3,
+                DiscountPercent = 10,
+                PricePerUnit = 1080
             };
             #endregion
 
