@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Playground.Core.Interfaces;
 using Playground.Infrastructure.Data;
 using AutoMapper;
+using Playground.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 var app = builder.Build();
 

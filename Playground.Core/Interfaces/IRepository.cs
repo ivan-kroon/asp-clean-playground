@@ -4,7 +4,7 @@ namespace Playground.Core.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity         
     {
-        Task<T?> GetByIdAsync(int id);
+        Task<T> GetByIdAsync(int id);
         Task<IEnumerable<T>> ListAsync(Func<IQueryable<T>, IQueryable<T>>? func = null);
         Task<T> AddAsync(T entity);
         Task UpdateAsync(T entity);

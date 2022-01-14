@@ -9,6 +9,7 @@ namespace Playground.API.Mapping
         public InvoiceItemProfile()
         {
             CreateMap<InvoiceItem, InvoiceItemDto>();
+            CreateMap<InvoiceItemForCreationDto, InvoiceItem>();
         }
     }
 }

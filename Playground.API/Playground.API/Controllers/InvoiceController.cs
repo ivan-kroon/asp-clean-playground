@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Playground.API.ViewModels.Invoice;
 using Playground.Core.Entities;
-using Playground.Core.Interfaces;
+using Playground.Services;
 
 namespace Playground.API.Controllers
 {
@@ -11,45 +10,48 @@ namespace Playground.API.Controllers
     [ApiController]
     public class InvoiceController : ControllerBase
     {
-        private readonly IRepository<Invoice> _invoiceRepository;
         private readonly IMapper _mapper;
+        private readonly IInvoiceService _invoiceService;
 
-        public InvoiceController(IRepository<Invoice> invoiceRepository, IMapper mapper)
+        public InvoiceController(IMapper mapper, IInvoiceService invoiceService)
         {
-            _invoiceRepository = invoiceRepository;
             _mapper = mapper;
+            _invoiceService = invoiceService;
         }
 
         // GET: api/invoice
         [HttpGet]
         public async Task<IEnumerable<InvoiceDto>> GetInvoices()
         {
-            var invoices = await _invoiceRepository.ListAsync();
-            var result = _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
+            var invoices = await _invoiceService.GetAllInvoicesAsync();
+            var invoiceDtos = _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
 
-            return result;
+            return invoiceDtos;
         }
 
         // GET api/invoice/5-
         [HttpGet("{id}")]
         public async Task<InvoiceDto> GetInvoice(int id)
         {
-            var inv = await _invoiceRepository.SingleAsync(i => i.Where(x => x.Id == id)
-                .Include(i => i.invoiceItems).ThenInclude(ia => ia.Product)
-                .Include(i => i.Customer));
+            var invoice = await _invoiceService.GetInvoiceAsync(id);
+            var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
 
-            var result = _mapper.Map<InvoiceDto>(inv);
-
-            return result;
+            return invoiceDto;
         }
 
-        #region toImplement
         // POST api/invoice
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<InvoiceDto>> Post(InvoiceForCreationDto invoiceForCreationDto)
         {
+            var invoice = _mapper.Map<Invoice>(invoiceForCreationDto);
+            await _invoiceService.AddInvoiceAsync(invoice);
+
+            var createdInvoice = await _invoiceService.GetInvoiceAsync(invoice.Id);
+            var invoiceDto = _mapper.Map<InvoiceDto>(createdInvoice);
+            return CreatedAtAction("GetInvoice", new { id = createdInvoice.Id }, invoiceDto);
         }
 
+        #region ToImplement
         // PUT api/invoice/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
