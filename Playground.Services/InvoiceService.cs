@@ -45,7 +45,7 @@ namespace Playground.Services
                 var product = await _productRepository.GetByIdAsync(item.ProductId);
                 item.PricePerUnit = product.Price - (product.Price / 100 * item.DiscountPercent);
             }
-            
+
             await _invoiceRepository.AddAsync(invoice);
         }
     }

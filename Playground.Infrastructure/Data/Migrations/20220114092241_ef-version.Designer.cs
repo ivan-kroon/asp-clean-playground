@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Playground.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using Playground.Infrastructure.Data;
 namespace Playground.Infrastructure.Migrations
 {
     [DbContext(typeof(PlayDbContext))]
-    partial class PlayDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220114092241_ef-version")]
+    partial class efversion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

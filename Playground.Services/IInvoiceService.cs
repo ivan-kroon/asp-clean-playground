@@ -6,6 +6,6 @@ namespace Playground.Services
     {
         Task<IEnumerable<Invoice>> GetAllInvoicesAsync();
         Task<Invoice> GetInvoiceAsync(int id);
-        Task AddInvoiceAsync(Invoice invoice);  
+        Task AddInvoiceAsync(Invoice invoice);
     }
 }
