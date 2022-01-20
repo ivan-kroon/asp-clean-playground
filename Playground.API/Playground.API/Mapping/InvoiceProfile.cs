@@ -8,7 +8,12 @@ namespace Playground.API.Mapping
     {
         public InvoiceProfile()
         {
-            CreateMap<Invoice, InvoiceDto>();
+            CreateMap<Invoice, InvoiceDto>()
+                .ForMember(io => io.DayNumber, opts => 
+                {
+                    opts.MapFrom(inv => (DateTime.Now - inv.DateCreated).Days);
+                });
+
             CreateMap<InvoiceForCreationDto, Invoice>();
         }
     }

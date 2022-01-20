@@ -48,5 +48,10 @@ namespace Playground.Services
 
             await _invoiceRepository.AddAsync(invoice);
         }
+
+        public async Task Wait10SecAsync()
+        {
+            await Task.Delay(10000);
+        }
     }
 }

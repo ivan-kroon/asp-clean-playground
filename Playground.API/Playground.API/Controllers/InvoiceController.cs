@@ -19,10 +19,22 @@ namespace Playground.API.Controllers
             _invoiceService = invoiceService;
         }
 
-        // GET: api/invoice
+        //// GET: api/invoice
+        //[HttpGet]
+        //public async Task<IEnumerable<InvoiceDto>> GetInvoices()
+        //{
+        //    var invoices = await _invoiceService.GetAllInvoicesAsync();
+        //    var invoiceDtos = _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
+
+        //    return invoiceDtos;
+        //}
+
         [HttpGet]
         public async Task<IEnumerable<InvoiceDto>> GetInvoices()
         {
+            Task.Delay(10000).Wait();
+            //_invoiceService.Wait10SecAsync();
+
             var invoices = await _invoiceService.GetAllInvoicesAsync();
             var invoiceDtos = _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
 

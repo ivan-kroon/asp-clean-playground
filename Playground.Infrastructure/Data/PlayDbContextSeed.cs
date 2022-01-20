@@ -57,7 +57,7 @@ namespace Playground.Infrastructure.Data
             {
                 InvoiceNumber = "01/2022",
                 Customer = customer1,
-                DateCreated = DateTime.Today,
+                DateCreated = DateTime.Today.AddDays(-5),
             };
 
             var invoice2 = new Invoice
