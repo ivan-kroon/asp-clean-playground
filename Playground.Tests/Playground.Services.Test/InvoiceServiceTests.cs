@@ -12,54 +12,72 @@ using Xunit;
 
 namespace Playground.Tests.Playground.Services.Test
 {
-    public class InvoiceServiceTests : PlaygroundTestBase
+    public class InvoiceServiceTests : IClassFixture<SharedDatabaseFixture>
     {
         IRepository<Invoice> invoiceRepository;
         IRepository<Product> productRepository;
         IInvoiceService invoiceService;
+        private readonly SharedDatabaseFixture _fixture;
 
-        public InvoiceServiceTests()
+        public InvoiceServiceTests(SharedDatabaseFixture fixture)
         {
-            invoiceRepository = new EfRepository<Invoice>(testDbContext);
-            productRepository = new EfRepository<Product>(testDbContext);
-            invoiceService = new InvoiceService(invoiceRepository, productRepository);
+            _fixture = fixture;
         }
 
         [Theory]
         [Repeat(200)]
         public async Task InvoiceService_ShouldReturnAllInvoices(int i)
         {
-            var result = await invoiceService.GetAllInvoicesAsync();
-
-            Assert.Equal(2, result.Count());
+            using (var context = _fixture.CreateContext())
+            {
+                InitializeDependecies(context);
+                var result = await invoiceService.GetAllInvoicesAsync();
+                Assert.Equal(2, result.Count());
+            }
         }
 
         [Theory]
         [Repeat(200)]
         public async Task InvoiceService_ShouldReturnCorrectInvoice(int i)
         {
-            Invoice invoice = await invoiceService.GetInvoiceAsync(1);
+            using (var context = _fixture.CreateContext())
+            {
+                InitializeDependecies(context);
 
-            Assert.NotNull(invoice);
-            Assert.Equal(1, invoice.Id);
+                Invoice invoice = await invoiceService.GetInvoiceAsync(1);
+
+                Assert.NotNull(invoice);
+                Assert.Equal(1, invoice.Id);
+            }
         }
 
         [Theory]
         [Repeat(200)]
         public async Task InvoiceService_ShouldCalculateCorrectPricePerUnit(int i)
         {
-            //Arrange
-            Invoice invoice = await invoiceService.GetInvoiceAsync(1);
-            invoice.Id = 0;
+            using (var transaction = _fixture.Connection.BeginTransaction())
+            {
+                using (var context = _fixture.CreateContext(transaction))
+                {
+                    InitializeDependecies(context);
 
-            //Act
-            await invoiceService.AddInvoiceAsync(invoice);
+                    Invoice invoice = await invoiceService.GetInvoiceAsync(1);
+                    invoice.Id = 0;
 
-            //Assert
+                    await invoiceService.AddInvoiceAsync(invoice);
 
-            //check values of calculated prices for every item in passed invoice object
-            Assert.Equal(80, invoice.invoiceItems.ElementAt(0).PricePerUnit);
-            Assert.Equal(400, invoice.invoiceItems.ElementAt(1).PricePerUnit);
+                    //check values of calculated prices for every item in passed invoice object
+                    Assert.Equal(80, invoice.invoiceItems.ElementAt(0).PricePerUnit);
+                    Assert.Equal(400, invoice.invoiceItems.ElementAt(1).PricePerUnit);
+                }
+            }
+        }
+
+        private void InitializeDependecies(PlayDbContext context)
+        {
+            invoiceRepository = new EfRepository<Invoice>(context);
+            productRepository = new EfRepository<Product>(context);
+            invoiceService = new InvoiceService(invoiceRepository, productRepository);
         }
     }
 }
