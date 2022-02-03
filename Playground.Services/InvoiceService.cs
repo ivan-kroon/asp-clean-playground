@@ -33,6 +33,8 @@ namespace Playground.Services
                 .Include(i => i.invoiceItems).ThenInclude(ia => ia.Product)
                 .Include(i => i.Customer));
 
+            int i = 10;
+
             return invoices;
         }
 
@@ -43,10 +45,15 @@ namespace Playground.Services
             foreach (var item in invoice.invoiceItems)
             {
                 var product = await _productRepository.GetByIdAsync(item.ProductId);
-                item.PricePerUnit = product.Price - (product.Price / 100 * item.DiscountPercent);
+                item.PricePerUnit = CalculatePricePerUnit(product.Price, item.DiscountPercent);
             }
 
             await _invoiceRepository.AddAsync(invoice);
+        }
+
+        private decimal CalculatePricePerUnit(decimal price, decimal discountPercent)
+        {
+            return price - (price / 100 * discountPercent);
         }
 
         public async Task Wait10SecAsync()

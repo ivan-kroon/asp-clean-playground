@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
@@ -24,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Playground.API\Playground.API\Playground.API.csproj" />
     <ProjectReference Include="..\Playground.Core\Playground.Core.csproj" />
     <ProjectReference Include="..\Playground.Infrastructure\Playground.Infrastructure.csproj" />
     <ProjectReference Include="..\Playground.Services\Playground.Services.csproj" />

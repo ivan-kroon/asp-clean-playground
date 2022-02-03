@@ -25,7 +25,7 @@ namespace Playground.Tests.Playground.Services.Test
         }
 
         [Theory]
-        [Repeat(200)]
+        [Repeat(10)]
         public async Task InvoiceService_ShouldReturnAllInvoices(int i)
         {
             using (var context = _fixture.CreateContext())
@@ -37,7 +37,7 @@ namespace Playground.Tests.Playground.Services.Test
         }
 
         [Theory]
-        [Repeat(200)]
+        [Repeat(10)]
         public async Task InvoiceService_ShouldReturnCorrectInvoice(int i)
         {
             using (var context = _fixture.CreateContext())
@@ -52,7 +52,7 @@ namespace Playground.Tests.Playground.Services.Test
         }
 
         [Theory]
-        [Repeat(200)]
+        [Repeat(10)]
         public async Task InvoiceService_ShouldCalculateCorrectPricePerUnit(int i)
         {
             using (var transaction = _fixture.Connection.BeginTransaction())
